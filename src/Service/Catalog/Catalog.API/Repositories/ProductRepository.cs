@@ -19,6 +19,14 @@ namespace Catalog.API.Repositories
              await _context.Products.InsertOneAsync(product);
         }
 
+        public async Task<bool> UpdateProduct(Product product)
+        {
+            var updateresult = await _context.Products.ReplaceOneAsync(filter: g => g.Id == product.Id, replacement: product);
+
+            return updateresult.IsAcknowledged && updateresult.ModifiedCount > 0;
+
+        }
+
         public async Task<bool> DeleteProduct(string id)
         {
             FilterDefinition<Product> filter = Builders<Product>.Filter.ElemMatch(p=>p.Id ,id);
@@ -62,12 +70,6 @@ namespace Catalog.API.Repositories
 
         }
 
-        public async Task<bool> UpdateProduct(Product product)
-        {
-            var updateresult = await _context.Products.ReplaceOneAsync(filter: g=> g.Id == product.Id, replacement: product);
-
-            return updateresult.IsAcknowledged && updateresult.ModifiedCount> 0;
-           
-        }
+       
     }
 }
