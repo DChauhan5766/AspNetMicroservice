@@ -1,5 +1,4 @@
 ﻿using Catalog.API.Entities;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;
@@ -8,19 +7,18 @@ namespace Catalog.API.Data
 {
     public class CatalogContext : ICatalogContext
     {
-        public CatalogContext(IConfiguration configuration) {
+        public CatalogContext(IOptions<DBsetting> dbsetting) { 
 
 
-            var client = new MongoClient(configuration.GetValue<string>("CatalogDatabase:ConnectionString"));
-            var database = client.GetDatabase(configuration.GetValue<string>("CatalogDatabase:DatabaseName"));
+            //var client = new MongoClient(configuration.GetValue<string>("ConnectionStrings:ConnectionString"));
+            //var databse = client.GetDatabase(configuration.GetValue<string>("ConnectionStrings: DatabaseName"));
 
-            Products = database.GetCollection<Product>(configuration.GetValue<string>("CatalogDatabase:CollectionName"));
+            //Products = databse.GetCollection<Product>(configuration.GetValue<string>("ConnectionStrings: CollectionName"));
+            var mongoclient = new MongoClient(dbsetting.Value.ConnectionString);
+            var mongodatabase = mongoclient.GetDatabase(dbsetting.Value.DatabaseName);
+            Products = mongodatabase.GetCollection<Product>(dbsetting.Value.CollectionName);
+
             CatalogContextSeed.SeedData(Products);
-            //var mongoclient = new MongoClient(dbsetting.Value.ConnectionString);
-            //var mongodatabase = mongoclient.GetDatabase(dbsetting.Value.DatabaseName);
-            //Products = mongodatabase.GetCollection<Product>(dbsetting.Value.CollectionName);
-
-            //CatalogContextSeed.SeedData(Products);
 
         }
          public IMongoCollection<Product> Products { get; }
