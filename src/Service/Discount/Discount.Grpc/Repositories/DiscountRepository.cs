@@ -16,10 +16,11 @@ namespace Discount.Grpc.Repositories
             using var connection = new NpgsqlConnection
                (_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
 
-            var affected = await connection.ExecuteAsync("insert into Coupon(ProductName, Description, Amount) values (@ProductName, @Description, @Amount)",
-                new { ProductName = coupon.ProductName, Description = coupon.Description, Amount = coupon.Amount });
+            var affected = await connection.ExecuteAsync("insert into Coupon(ProductName, Description, Amount) values (@PdName, @Desc, @Amt)",
+                new { PdName = coupon.ProductName, Desc = coupon.Description, Amt = coupon.Amount });
 
-             if(affected==0)
+
+            if (affected==0)
                 return false;
 
              return true;
@@ -30,8 +31,8 @@ namespace Discount.Grpc.Repositories
             using var connection = new NpgsqlConnection
                (_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
 
-            var affected = await connection.ExecuteAsync("delete from Coupon where ProductName = @ProductName",
-                new { ProductName = productName });
+            var affected = await connection.ExecuteAsync("delete from Coupon where ProductName = @ProductName", new { ProductName = productName });
+
 
             if (affected == 0)
                 return false;
@@ -57,8 +58,8 @@ namespace Discount.Grpc.Repositories
             using var connection = new NpgsqlConnection
               (_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
 
-            var affected = await connection.ExecuteAsync("update Coupon set ProductName = @ProductName, Description =@Description, Amount=@Amount where Id = @Id",
-                new { ProductName = coupon.ProductName, Description = coupon.Description, Amount = coupon.Amount, Id = coupon.Id });
+            var affected = await connection.ExecuteAsync("update Coupon set ProductName = @PdName, Description =@Desc, Amount=@Amt where Id = @id",
+                new { PdName = coupon.ProductName, Desc = coupon.Description, Amt = coupon.Amount, id = coupon.Id });
 
             if (affected == 0)
                 return false;

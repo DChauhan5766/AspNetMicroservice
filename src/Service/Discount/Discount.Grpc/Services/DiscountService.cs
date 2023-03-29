@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Discount.Grpc.Entities;
 using Discount.Grpc.Protos;
 using Discount.Grpc.Repositories;
 using Grpc.Core;
@@ -31,10 +32,37 @@ namespace Discount.Grpc.Services
             return couponModel;
         }
 
-        public override Task<CouponModel> CreateDiscount(CreateDiscountRequest request, ServerCallContext context)
+        public override async Task<CouponModel> CreateDiscount(CreateDiscountRequest request, ServerCallContext context)
         {
-            return base.CreateDiscount(request, context);
+            var coupon = _mapper.Map<Coupon>(request.Coupon);
+            await _repository.CreateDiscount(coupon);
 
+            _logger.LogInformation("Discount successfully created. ProductName : {ProductName}", coupon.ProductName);
+            var couponmodel = _mapper.Map<CouponModel>(coupon);
+
+            return couponmodel;
+
+        }
+
+        public override async Task<CouponModel> UpdateDiscount(UpdateDiscountRequest request, ServerCallContext context)
+        {
+            var coupon = _mapper.Map<Coupon>(request.Coupon);
+            await _repository.UpdateDiscount(coupon);
+
+            _logger.LogInformation("Discount successfully updated. ProductName : {ProductName}", coupon.ProductName);
+
+            var couponmodel = _mapper.Map<CouponModel>(coupon);
+            return couponmodel;
+        }
+
+        public override async Task<DeleteDiscountResponse> DeleteDiscount(DeleteDiscountRequest request, ServerCallContext context)
+        {
+            var deleted = await _repository.DeleteDiscount(request.Productname);
+            var response = new DeleteDiscountResponse
+            {
+                Success = deleted,
+            };
+            return response;
         }
     }
 }
