@@ -3,7 +3,7 @@ using Ordering.Domain.Entities;
 
 namespace Ordering.Infrastructure.Persistance
 {
-    internal class OrderContextSeeds
+    public class OrderContextSeeds
     {
         public static async Task SeedAsync(OrderContext orderContext, ILogger<OrderContextSeeds> logger)
         {
